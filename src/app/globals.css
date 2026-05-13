@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-plus-jakarta);
+  --font-heading: var(--font-plus-jakarta);
+  
+  /* SaaS Bento Box Theme Colors */
+  --color-primary: #6366F1;       /* Indigo 500 */
+  --color-primary-dark: #4F46E5;  /* Indigo 600 */
+  --color-secondary: #818CF8;     /* Indigo 400 */
+  --color-bg-light: #FAFAFA;      /* Very light gray/white */
+  --color-text-dark: #1E293B;     /* Slate 800 */
+  
+  /* Utility Colors */
+  --color-success: #10B981;       /* Emerald 500 */
+  --color-warning: #F59E0B;       /* Amber 500 */
+  
+  /* Pastel Card Colors */
+  --color-pastel-orange: #FFEDD5; /* Orange 100 */
+  --color-pastel-blue: #E0F2FE;   /* Sky 100 */
+  --color-pastel-purple: #F3E8FF; /* Purple 100 */
+  --color-pastel-green: #D1FAE5;  /* Emerald 100 */
+}
+
+:root {
+  --background: var(--color-bg-light);
+  --foreground: var(--color-text-dark);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
