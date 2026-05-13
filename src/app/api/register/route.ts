@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
-import prisma from '@/lib/prisma';
+import { supabaseAdmin } from '@/lib/supabase';
 
 const razorpay = new Razorpay({
   key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || '',
@@ -18,34 +18,31 @@ export async function POST(req: Request) {
     } = body;
 
     // 1. Create or update the pending user
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: {
-        fullName,
-        phone,
-        age: age ? parseInt(age) : null,
-        city,
-        state,
-        country,
-        healthConditions,
-        underTreatment,
-        paymentStatus: 'PENDING',
-        paymentAmount: clientAmount || 1499
-      },
-      create: {
-        fullName,
-        email,
-        phone,
-        age: age ? parseInt(age) : null,
-        city,
-        state,
-        country,
-        healthConditions,
-        underTreatment,
-        paymentStatus: 'PENDING',
-        paymentAmount: clientAmount || 1499
-      }
-    });
+    const userData = {
+      fullName,
+      email,
+      phone,
+      age: age ? parseInt(age) : null,
+      city,
+      state,
+      country,
+      healthConditions,
+      underTreatment,
+      paymentStatus: 'PENDING',
+      paymentAmount: clientAmount || 1499,
+      updatedAt: new Date().toISOString()
+    };
+
+    const { data: user, error: upsertError } = await supabaseAdmin
+      .from('User')
+      .upsert(userData, { onConflict: 'email' })
+      .select()
+      .single();
+
+    if (upsertError || !user) {
+      console.error('Supabase upsert error:', upsertError);
+      throw new Error('Failed to save user data');
+    }
 
     // 2. Create Razorpay Order
     const orderOptions = {
@@ -57,10 +54,10 @@ export async function POST(req: Request) {
     const order = await razorpay.orders.create(orderOptions);
 
     // 3. Update user with order ID
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { razorpayOrderId: order.id }
-    });
+    await supabaseAdmin
+      .from('User')
+      .update({ razorpayOrderId: order.id })
+      .eq('id', user.id);
 
     return NextResponse.json({ 
       orderId: order.id, 

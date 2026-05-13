@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import prisma from '@/lib/prisma';
+import { supabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
@@ -25,29 +25,29 @@ export async function POST(req: Request) {
       const payment = event.payload.payment.entity;
       const orderId = payment.order_id;
       
-      // We might have already updated the user in /api/payment/verify
-      // But this acts as a robust async fallback
-      
-      const user = await prisma.user.findFirst({
-        where: { razorpayOrderId: orderId }
-      });
+      const { data: user, error: userError } = await supabaseAdmin
+        .from('User')
+        .select('*')
+        .eq('razorpayOrderId', orderId)
+        .single();
 
       if (user && user.paymentStatus !== 'COMPLETED') {
         const accessToken = uuidv4();
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 7);
         
-        await prisma.user.update({
-          where: { id: user.id },
-          data: {
+        await supabaseAdmin
+          .from('User')
+          .update({
             paymentStatus: 'COMPLETED',
             razorpayPaymentId: payment.id,
             accessToken: accessToken,
-            accessTokenExpiry: expiryDate,
-            subscriptionStart: new Date(),
-            subscriptionEnd: new Date(new Date().setMonth(new Date().getMonth() + 1))
-          }
-        });
+            accessTokenExpiry: expiryDate.toISOString(),
+            subscriptionStart: new Date().toISOString(),
+            subscriptionEnd: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+            updatedAt: new Date().toISOString()
+          })
+          .eq('id', user.id);
 
         // Trigger Resend email here if needed
       }
