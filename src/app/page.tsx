@@ -62,8 +62,14 @@ export default function Home() {
             className="relative"
           >
             <div className="aspect-square rounded-full bg-secondary/20 absolute -inset-4 blur-3xl" />
-            <div className="aspect-[4/5] bg-white rounded-3xl border-4 border-secondary/30 shadow-xl overflow-hidden relative z-10 flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&q=80')] bg-cover bg-center">
-              {/* Fallback image if unsplash fails */}
+            <div className="aspect-[4/5] bg-white rounded-3xl border-4 border-secondary/30 shadow-xl overflow-hidden relative z-10">
+              <Image 
+                src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&q=80"
+                alt="Fertility Yoga"
+                fill
+                priority
+                className="object-cover"
+              />
               <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
             </div>
           </motion.div>
@@ -86,6 +92,10 @@ export default function Home() {
               <motion.div 
                 key={i}
                 whileHover={{ y: -5 }}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
                 className="p-6 bg-bg-light rounded-2xl border border-secondary/20 text-left flex gap-4"
               >
                 <div className="w-8 h-8 bg-warning/10 text-warning rounded-full flex items-center justify-center flex-shrink-0 mt-1">!</div>
@@ -105,7 +115,13 @@ export default function Home() {
           </div>
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Fertility Yoga Card */}
-            <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border-t-8 border-pastel-blue flex flex-col justify-between transition-transform hover:-translate-y-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border-t-8 border-pastel-blue flex flex-col justify-between transition-transform hover:-translate-y-2"
+            >
               <div>
                 <span className="inline-block px-3 py-1 rounded-full bg-pastel-blue text-blue-700 text-xs font-bold mb-4 uppercase tracking-widest">Conception Support</span>
                 <h3 className="text-2xl font-bold mb-4">Fertility Yoga & Wellness</h3>
@@ -117,10 +133,16 @@ export default function Home() {
               <Link href="/program" className="block w-full py-4 bg-primary text-white text-center rounded-2xl font-bold shadow-md hover:bg-primary-dark transition-colors">
                 View Fertility Details
               </Link>
-            </div>
+            </motion.div>
 
             {/* Prenatal Yoga Card */}
-            <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border-t-8 border-pastel-purple flex flex-col justify-between transition-transform hover:-translate-y-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border-t-8 border-pastel-purple flex flex-col justify-between transition-transform hover:-translate-y-2"
+            >
               <div>
                 <span className="inline-block px-3 py-1 rounded-full bg-pastel-purple text-purple-700 text-xs font-bold mb-4 uppercase tracking-widest">Pregnancy Support</span>
                 <h3 className="text-2xl font-bold mb-4">Prenatal & Garbhasanskar</h3>
@@ -132,7 +154,7 @@ export default function Home() {
               <Link href="/prenatal" className="block w-full py-4 bg-primary text-white text-center rounded-2xl font-bold shadow-md hover:bg-primary-dark transition-colors">
                 View Prenatal Details
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -166,12 +188,27 @@ export default function Home() {
       </section>
 
       {/* SECTION 5: MEET DR. MADHAVI */}
-      <section className="py-20 bg-primary-dark text-white">
+      <section className="py-20 bg-primary-dark text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <div className="aspect-square bg-secondary/20 rounded-3xl overflow-hidden relative border-4 border-secondary">
-             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-80 mix-blend-luminosity" />
-          </div>
-          <div className="space-y-6">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="aspect-square bg-secondary/20 rounded-3xl overflow-hidden relative border-4 border-secondary"
+          >
+             <Image 
+                src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?auto=format&fit=crop&q=80"
+                alt="Dr. Madhavi Soriya"
+                fill
+                className="object-cover opacity-80 mix-blend-luminosity"
+             />
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-6"
+          >
             <h2 className="text-3xl md:text-4xl font-bold font-heading text-secondary">Meet Dr. Madhavi</h2>
             <p className="text-xl font-medium">Physiotherapist & Women's Wellness Coach</p>
             <ul className="space-y-3 text-white/80">
@@ -189,7 +226,7 @@ export default function Home() {
                 Read Full Bio <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
