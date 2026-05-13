@@ -16,17 +16,24 @@ export default function RegisterPage() {
   const [state, setState] = useState('');
   const [country, setCountry] = useState('India');
   const [program, setProgram] = useState('fertility');
-  const [plan, setPlan] = useState('fertility');
+  const [plan, setPlan] = useState('1_month');
   const [acceptedTerms, setAcceptedTerms] = useState<Record<string, boolean>>({});
 
   const prices: Record<string, number> = {
-    'fertility': 1499,
     '1_month': 1499,
     '3_months': 3999,
     '6_months': 7999
   };
 
   const currentPrice = prices[plan] || 1499;
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const p = urlParams.get('program');
+    if (p === 'prenatal' || p === 'fertility') {
+      setProgram(p);
+    }
+  }, []);
   
   // Health Info
   const [age, setAge] = useState('');
@@ -88,7 +95,7 @@ export default function RegisterPage() {
       amount: amount,
       currency: 'INR',
       name: 'Dr. Madhavi Soriya Wellness',
-      description: 'Fertility Yoga Program',
+      description: `${program === 'fertility' ? 'Fertility' : 'Prenatal'} Yoga Program - ${plan.replace('_', ' ')}`,
       order_id: orderId,
       prefill: {
         name: name,
@@ -157,45 +164,53 @@ export default function RegisterPage() {
           <div className="lg:col-span-2">
             <form id="registration-form" onSubmit={handlePayment} className="space-y-8">
               
-              {/* Step 0: Program Selection */}
+              {/* Step 0: Program & Plan Selection */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20 space-y-6">
                 <div className="space-y-4">
                   <label className="block text-sm font-bold text-text-dark/70">Select Program</label>
-                  <select 
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-                    value={program}
-                    onChange={(e) => {
-                      setProgram(e.target.value);
-                      setPlan(e.target.value === 'prenatal' ? '1_month' : 'fertility');
-                    }}
-                    required
-                  >
-                    <option value="fertility">Fertility Yoga & Wellness (₹1499/mo)</option>
-                    <option value="prenatal">Prenatal Yoga & Garbhasanskar</option>
-                  </select>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setProgram('fertility')}
+                      className={`p-4 rounded-xl border-2 transition-all text-left ${program === 'fertility' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-gray-100'}`}
+                    >
+                      <div className="text-xl mb-1">🌸</div>
+                      <div className={`font-bold ${program === 'fertility' ? 'text-primary' : 'text-text-dark'}`}>Fertility</div>
+                      <div className="text-xs text-text-dark/50">Yoga & Wellness</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProgram('prenatal')}
+                      className={`p-4 rounded-xl border-2 transition-all text-left ${program === 'prenatal' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-gray-100'}`}
+                    >
+                      <div className="text-xl mb-1">👶</div>
+                      <div className={`font-bold ${program === 'prenatal' ? 'text-primary' : 'text-text-dark'}`}>Prenatal</div>
+                      <div className="text-xs text-text-dark/50">Yoga & Garbhasanskar</div>
+                    </button>
+                  </div>
                 </div>
 
-                {program === 'prenatal' && (
-                  <div className="space-y-4">
-                    <label className="block text-sm font-bold text-text-dark/70">Select Plan</label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { id: '1_month', label: '1 Month', price: 1499 },
-                        { id: '3_months', label: '3 Months', price: 3999 },
-                        { id: '6_months', label: '6 Months', price: 7999 },
-                      ].map((p) => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => setPlan(p.id)}
-                          className={`px-3 py-3 rounded-xl border-2 text-xs font-bold transition-all ${plan === p.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-100 text-text-dark/50'}`}
-                        >
-                          {p.label}<br/>₹{p.price}
-                        </button>
-                      ))}
-                    </div>
+                <div className="space-y-4">
+                  <label className="block text-sm font-bold text-text-dark/70">Select Duration (Same for both programs)</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: '1_month', label: '1 Month', price: 1499 },
+                      { id: '3_months', label: '3 Months', price: 3999 },
+                      { id: '6_months', label: '6 Months', price: 7999 },
+                    ].map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setPlan(p.id)}
+                        className={`px-3 py-4 rounded-xl border-2 text-center transition-all ${plan === p.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-100 text-text-dark/50 hover:border-gray-200'}`}
+                      >
+                        <div className="font-bold text-sm">{p.label}</div>
+                        <div className="text-lg font-black mt-1">₹{p.price}</div>
+                        {p.id === '3_months' && <div className="text-[10px] uppercase font-bold text-primary mt-1">Best Value</div>}
+                      </button>
+                    ))}
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Step 1 */}
@@ -286,21 +301,48 @@ export default function RegisterPage() {
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20 sticky top-24">
               <h3 className="text-xl font-bold font-heading mb-4 border-b pb-2">Order Summary</h3>
               <div className="mb-6">
-                <h4 className="font-semibold mb-2">🌸 Fertility Yoga & Wellness</h4>
-                <ul className="text-sm text-text-dark/70 space-y-1 mb-4">
-                  <li>📅 4-5 PM IST Daily</li>
-                  <li>🗣️ Hindi</li>
-                  <li>💻 Online (Zoom)</li>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl">
+                    {program === 'fertility' ? '🌸' : '👶'}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-text-dark leading-tight">
+                      {program === 'fertility' ? 'Fertility Yoga & Wellness' : 'Prenatal Yoga & Garbhasanskar'}
+                    </h4>
+                    <span className="text-xs font-bold text-primary uppercase tracking-wider">
+                      {plan.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+                
+                <ul className="text-sm text-text-dark/70 space-y-2 mb-6 bg-bg-light/50 p-4 rounded-xl">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <span>{program === 'fertility' ? '4:00 - 5:00 PM IST' : '6:15 AM or 5:00 PM IST'}</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <span>Daily Live Online Classes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <span>Hindi Language</span>
+                  </li>
                 </ul>
-                <div className="flex justify-between font-medium border-t pt-2">
-                  <span>Program Fee:</span>
-                  <span>₹1499</span>
+
+                <div className="space-y-2 border-t pt-4">
+                  <div className="flex justify-between text-sm text-text-dark/60">
+                    <span>Program Fee ({plan.replace('_', ' ')}):</span>
+                    <span>₹{currentPrice}</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-xl text-text-dark pt-2 border-t">
+                    <span>Total Amount:</span>
+                    <span className="text-primary">₹{currentPrice}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between font-bold text-lg border-t pt-2 mt-2">
-                  <span>Total:</span>
-                  <span>₹1499</span>
-                </div>
-                <p className="text-xs text-warning font-bold mt-2 text-center">⚠️ NO REFUND</p>
+                <p className="text-[10px] text-warning font-bold mt-4 text-center p-2 bg-warning/5 rounded-lg border border-warning/10 uppercase tracking-widest">
+                  ⚠️ No Refund After Payment
+                </p>
               </div>
 
               {!allChecked && (
@@ -317,7 +359,7 @@ export default function RegisterPage() {
                     : 'bg-gray-300 cursor-not-allowed text-gray-500 shadow-none'
                 }`}
               >
-                {isProcessing ? 'Processing...' : 'PROCEED TO PAYMENT — ₹1499'}
+                {isProcessing ? 'Processing...' : `PROCEED TO PAYMENT — ₹${currentPrice}`}
               </button>
               
               <div className="mt-4 flex items-center justify-center gap-2 text-xs text-text-dark/60">

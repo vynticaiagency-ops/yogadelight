@@ -29,9 +29,19 @@ export default function PricingPage() {
               <span className="inline-block px-4 py-1.5 rounded-full bg-pastel-blue text-blue-600 font-bold text-sm mb-4 uppercase tracking-widest">
                 🌸 Fertility Program
               </span>
-              <div className="flex items-end justify-center gap-1">
-                <span className="text-5xl font-black text-text-dark">₹1499</span>
-                <span className="text-text-dark/50 mb-1 font-medium">/ month</span>
+              <div className="flex items-center justify-center gap-4">
+                <div className="text-center">
+                   <div className="text-2xl font-black text-text-dark">₹1499</div>
+                   <div className="text-[10px] text-text-dark/50 font-bold uppercase">1 Month</div>
+                </div>
+                <div className="text-center p-2 bg-primary/5 rounded-xl border border-primary/20">
+                   <div className="text-3xl font-black text-primary">₹3999</div>
+                   <div className="text-[10px] text-primary/70 font-bold uppercase">3 Months</div>
+                </div>
+                <div className="text-center">
+                   <div className="text-2xl font-black text-text-dark">₹7999</div>
+                   <div className="text-[10px] text-text-dark/50 font-bold uppercase">6 Months</div>
+                </div>
               </div>
             </div>
 
