@@ -3,6 +3,8 @@ import crypto from 'crypto';
 import prisma from '@/lib/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

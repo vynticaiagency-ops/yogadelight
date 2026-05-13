@@ -1,24 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { AlertTriangle, ShieldCheck, FileText, Users } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
-export default function PoliciesPage() {
+function PoliciesContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState('refund');
 
   useEffect(() => {
     // If a hash exists in the URL (e.g. /policies#refund), open that tab
-    const hash = window.location.hash.replace('#', '');
-    if (['refund', 'privacy', 'terms', 'conduct'].includes(hash)) {
-      setActiveTab(hash);
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '');
+      if (['refund', 'privacy', 'terms', 'conduct'].includes(hash)) {
+        setActiveTab(hash);
+      }
     }
   }, [searchParams]);
 
   const updateHash = (tab: string) => {
     setActiveTab(tab);
-    window.location.hash = tab;
+    if (typeof window !== 'undefined') {
+      window.location.hash = tab;
+    }
   };
 
   return (
@@ -178,6 +182,15 @@ export default function PoliciesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense
+export default function PoliciesPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading policies...</div>}>
+      <PoliciesContent />
+    </Suspense>
   );
 }
 
