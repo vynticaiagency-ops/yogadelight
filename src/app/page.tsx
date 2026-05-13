@@ -96,35 +96,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 3: PROGRAM OVERVIEW */}
+      {/* SECTION 3: PROGRAMS OVERVIEW */}
       <section className="py-20 bg-primary/5 border-y border-primary/10">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border-t-4 border-secondary grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-bold font-heading">The Fertility Yoga & Wellness Program</h2>
-              <p className="text-lg text-text-dark/70">A complete, daily holistic system designed to prepare your body and mind for a healthy conception.</p>
-              <div className="grid grid-cols-2 gap-3">
-                {['Fertility Yoga', 'Pranayam', 'Meditation', 'Stress Management', 'Hormonal Balance', 'Diet Guidance'].map((item, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm font-medium">
-                    <CheckCircle2 className="w-4 h-4 text-success" /> {item}
-                  </div>
-                ))}
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold font-heading">Choose Your Path to Wellness</h2>
+            <p className="text-text-dark/70 mt-2">Expert guidance for every stage of your journey.</p>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Fertility Yoga Card */}
+            <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border-t-8 border-pastel-blue flex flex-col justify-between transition-transform hover:-translate-y-2">
+              <div>
+                <span className="inline-block px-3 py-1 rounded-full bg-pastel-blue text-blue-700 text-xs font-bold mb-4 uppercase tracking-widest">Conception Support</span>
+                <h3 className="text-2xl font-bold mb-4">Fertility Yoga & Wellness</h3>
+                <p className="text-text-dark/70 text-sm mb-6">Daily 4-5 PM classes focusing on hormonal balance, stress reduction, and pelvic health.</p>
+                <div className="flex items-center gap-2 mb-8 text-xl font-black text-text-dark">
+                  ₹1499 <span className="text-sm font-normal text-text-dark/50">/ month</span>
+                </div>
               </div>
-              <div className="pt-6">
-                <Link href="/program" className="text-primary font-bold hover:underline inline-flex items-center gap-2">
-                  See Full Program Details <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+              <Link href="/program" className="block w-full py-4 bg-primary text-white text-center rounded-2xl font-bold shadow-md hover:bg-primary-dark transition-colors">
+                View Fertility Details
+              </Link>
             </div>
-            <div className="bg-bg-light p-8 rounded-2xl text-center space-y-6 border border-secondary/30">
-              <div className="text-5xl font-bold text-text-dark font-heading">₹1499<span className="text-lg text-text-dark/50 font-sans font-normal">/month</span></div>
-              <ul className="text-sm space-y-2 text-text-dark/70 inline-block text-left">
-                <li>✓ Daily Live Classes (4-5 PM)</li>
-                <li>✓ Small Batch Size</li>
-                <li>✓ WhatsApp Support</li>
-              </ul>
-              <Link href="/register" className="block w-full py-4 bg-primary text-white rounded-xl font-bold shadow-md hover:bg-primary-dark transition-colors">
-                Register Now
+
+            {/* Prenatal Yoga Card */}
+            <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border-t-8 border-pastel-purple flex flex-col justify-between transition-transform hover:-translate-y-2">
+              <div>
+                <span className="inline-block px-3 py-1 rounded-full bg-pastel-purple text-purple-700 text-xs font-bold mb-4 uppercase tracking-widest">Pregnancy Support</span>
+                <h3 className="text-2xl font-bold mb-4">Prenatal & Garbhasanskar</h3>
+                <p className="text-text-dark/70 text-sm mb-6">Specialized dual-batch classes for healthy pregnancy, labor prep, and baby's brain development.</p>
+                <div className="flex items-center gap-2 mb-8 text-xl font-black text-text-dark">
+                  Starts at ₹1499 <span className="text-sm font-normal text-text-dark/50">/ month</span>
+                </div>
+              </div>
+              <Link href="/prenatal" className="block w-full py-4 bg-primary text-white text-center rounded-2xl font-bold shadow-md hover:bg-primary-dark transition-colors">
+                View Prenatal Details
               </Link>
             </div>
           </div>

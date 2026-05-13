@@ -15,10 +15,23 @@ export default function RegisterPage() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [country, setCountry] = useState('India');
+  const [program, setProgram] = useState('fertility');
+  const [plan, setPlan] = useState('fertility');
+  const [acceptedTerms, setAcceptedTerms] = useState<Record<string, boolean>>({});
+
+  const prices: Record<string, number> = {
+    'fertility': 1499,
+    '1_month': 1499,
+    '3_months': 3999,
+    '6_months': 7999
+  };
+
+  const currentPrice = prices[plan] || 1499;
   
   // Health Info
   const [age, setAge] = useState('');
   const [healthConditions, setHealthConditions] = useState('');
+  const [underTreatment, setUnderTreatment] = useState('No');
   
   // 8 Mandatory Checkboxes
   const [checks, setChecks] = useState({
@@ -51,19 +64,32 @@ export default function RegisterPage() {
     setChecks(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handlePayment = (e: React.FormEvent) => {
+  const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!allChecked) return;
 
     setIsProcessing(true);
 
+    // 1. Create order on server
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        fullName: name, email, phone, age, city, state, country, healthConditions, underTreatment,
+        program, plan, amount: currentPrice
+      }),
+    });
+
+    const { orderId, amount } = await res.json();
+
     const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Use the test key
-      amount: 149900, // 1499 INR in paise
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: amount,
       currency: 'INR',
       name: 'Dr. Madhavi Soriya Wellness',
       description: 'Fertility Yoga Program',
+      order_id: orderId,
       prefill: {
         name: name,
         email: email,
@@ -131,6 +157,47 @@ export default function RegisterPage() {
           <div className="lg:col-span-2">
             <form id="registration-form" onSubmit={handlePayment} className="space-y-8">
               
+              {/* Step 0: Program Selection */}
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20 space-y-6">
+                <div className="space-y-4">
+                  <label className="block text-sm font-bold text-text-dark/70">Select Program</label>
+                  <select 
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                    value={program}
+                    onChange={(e) => {
+                      setProgram(e.target.value);
+                      setPlan(e.target.value === 'prenatal' ? '1_month' : 'fertility');
+                    }}
+                    required
+                  >
+                    <option value="fertility">Fertility Yoga & Wellness (₹1499/mo)</option>
+                    <option value="prenatal">Prenatal Yoga & Garbhasanskar</option>
+                  </select>
+                </div>
+
+                {program === 'prenatal' && (
+                  <div className="space-y-4">
+                    <label className="block text-sm font-bold text-text-dark/70">Select Plan</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { id: '1_month', label: '1 Month', price: 1499 },
+                        { id: '3_months', label: '3 Months', price: 3999 },
+                        { id: '6_months', label: '6 Months', price: 7999 },
+                      ].map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setPlan(p.id)}
+                          className={`px-3 py-3 rounded-xl border-2 text-xs font-bold transition-all ${plan === p.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-100 text-text-dark/50'}`}
+                        >
+                          {p.label}<br/>₹{p.price}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Step 1 */}
               <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20">
                 <h3 className="text-xl font-bold font-heading mb-4 border-b pb-2">Step 1: Personal Details</h3>

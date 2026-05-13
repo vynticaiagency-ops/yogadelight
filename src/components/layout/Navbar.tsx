@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, Menu, X, ArrowRight, PlayCircle, Users, Star, FileText, Heart, Activity } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, PlayCircle, Users, Star, FileText, Heart, Activity, Baby } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
@@ -22,21 +22,21 @@ const navItems = [
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="p-2 bg-pastel-green rounded-lg text-emerald-600"><Heart className="w-5 h-5" /></div>
+            <div className="p-2 bg-pastel-purple rounded-lg text-purple-600"><Baby className="w-5 h-5" /></div>
             <div>
-              <Link href="/program" className="font-bold text-text-dark hover:text-primary transition-colors block mb-1">Stress Management</Link>
-              <p className="text-sm text-text-dark/70">Deep relaxation and nervous system regulation.</p>
+              <Link href="/prenatal" className="font-bold text-text-dark hover:text-primary transition-colors block mb-1">Prenatal Yoga</Link>
+              <p className="text-sm text-text-dark/70">Healthy pregnancy & Garbhasanskar.</p>
             </div>
           </div>
         </div>
         <div className="bg-bg-light p-4 rounded-xl border border-gray-100 flex flex-col justify-between">
           <div>
-            <span className="text-xs font-bold text-primary uppercase tracking-wider mb-2 block">Live Daily</span>
-            <h4 className="font-bold text-text-dark mb-2">4:00 PM – 5:00 PM IST</h4>
-            <p className="text-sm text-text-dark/70 mb-4">Join our holistic online program via Zoom.</p>
+            <span className="text-xs font-bold text-primary uppercase tracking-wider mb-2 block">Our Programs</span>
+            <h4 className="font-bold text-text-dark mb-2">Holistic Wellness</h4>
+            <p className="text-sm text-text-dark/70 mb-4">Choose the program that fits your current life stage.</p>
           </div>
           <Link href="/register" className="text-sm font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
-            Enroll Now <ArrowRight className="w-4 h-4" />
+            Quick Register <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

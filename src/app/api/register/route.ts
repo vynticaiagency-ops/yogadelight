@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { 
       fullName, email, phone, age, city, state, country, 
-      healthConditions, underTreatment 
+      healthConditions, underTreatment, program, plan, amount: clientAmount 
     } = body;
 
     // 1. Create or update the pending user
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
         country,
         healthConditions,
         underTreatment,
-        paymentStatus: 'PENDING'
+        paymentStatus: 'PENDING',
+        paymentAmount: clientAmount || 1499
       },
       create: {
         fullName,
@@ -40,13 +41,13 @@ export async function POST(req: Request) {
         healthConditions,
         underTreatment,
         paymentStatus: 'PENDING',
-        paymentAmount: 1499
+        paymentAmount: clientAmount || 1499
       }
     });
 
     // 2. Create Razorpay Order
     const orderOptions = {
-      amount: 1499 * 100, // amount in smallest currency unit (paise)
+      amount: (clientAmount || 1499) * 100, // amount in smallest currency unit (paise)
       currency: "INR",
       receipt: `rcpt_${user.id}`,
     };
