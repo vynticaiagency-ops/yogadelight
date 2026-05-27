@@ -1,374 +1,348 @@
-'use client';
+import React from "react";
+import { RegistrationForm } from "@/components/forms/RegistrationForm";
+import {
+  ShieldCheck,
+  Heart,
+  Clock,
+  Calendar,
+  Check,
+  AlertCircle,
+  Copy,
+  Mail,
+  BookOpen,
+  ArrowRight,
+  DollarSign,
+  HelpCircle,
+} from "lucide-react";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { CheckCircle2, ShieldCheck, Lock } from 'lucide-react';
-import Link from 'next/link';
+export const metadata = {
+  title: "Prenatal Yoga & Garbhasanskar Registration",
+  description: "Enroll in the Prenatal Yoga & Garbhasanskar program guided by Dr. Madhavi Soriya. Live batches, pricing, and registration guidelines.",
+};
 
 export default function RegisterPage() {
-  const router = useRouter();
-  
-  // Personal Details
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('India');
-  const [program, setProgram] = useState('fertility');
-  const [plan, setPlan] = useState('1_month');
-  const [acceptedTerms, setAcceptedTerms] = useState<Record<string, boolean>>({});
-
-  const prices: Record<string, number> = {
-    '1_month': 1499,
-    '3_months': 3999,
-    '6_months': 7999
-  };
-
-  const currentPrice = prices[plan] || 1499;
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const p = urlParams.get('program');
-    if (p === 'prenatal' || p === 'fertility') {
-      setProgram(p);
-    }
-  }, []);
-  
-  // Health Info
-  const [age, setAge] = useState('');
-  const [healthConditions, setHealthConditions] = useState('');
-  const [underTreatment, setUnderTreatment] = useState('No');
-  
-  // 8 Mandatory Checkboxes
-  const [checks, setChecks] = useState({
-    programDetails: false,
-    faqs: false,
-    timing: false,
-    noRefund: false,
-    terms: false,
-    privacy: false,
-    whatsappOnly: false,
-    accurateInfo: false,
-  });
-
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const allChecked = Object.values(checks).every(Boolean);
-
-  // Dynamically load Razorpay script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  const handleCheckboxChange = (key: keyof typeof checks) => {
-    setChecks(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handlePayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!allChecked) return;
-
-    setIsProcessing(true);
-
-    // 1. Create order on server
-    const res = await fetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        fullName: name, email, phone, age, city, state, country, healthConditions, underTreatment,
-        program, plan, amount: currentPrice
-      }),
-    });
-
-    const { orderId, amount } = await res.json();
-
-    const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: amount,
-      currency: 'INR',
-      name: 'Dr. Madhavi Soriya Wellness',
-      description: `${program === 'fertility' ? 'Fertility' : 'Prenatal'} Yoga Program - ${plan.replace('_', ' ')}`,
-      order_id: orderId,
-      prefill: {
-        name: name,
-        email: email,
-        contact: phone,
-      },
-      theme: {
-        color: '#6366F1', // Indigo 500 to match theme
-      },
-      handler: function (response: any) {
-        // Handle successful payment
-        console.log('Payment successful', response);
-        setIsProcessing(false);
-        // Simulate adding token to URL
-        router.push('/thank-you?token=success_dummy_token');
-      },
-      modal: {
-        ondismiss: function() {
-          setIsProcessing(false);
-        }
-      }
-    };
-
-    const rzp = new (window as any).Razorpay(options);
-    rzp.open();
-  };
+  const learningModules = [
+    {
+      title: "Pregnancy Yoga Practice",
+      items: [
+        "Trimester-specific yoga postures",
+        "Chair yoga & modified stretches",
+        "Birth ball exercises",
+        "Safe pregnancy movements",
+      ],
+    },
+    {
+      title: "Breathwork & Relaxation",
+      items: [
+        "Pranayama techniques (Bhramari, Nadi Shodhana)",
+        "Guided meditation sessions",
+        "Yogic relaxation (Yoga Nidra)",
+        "Stress management tools",
+      ],
+    },
+    {
+      title: "Pregnancy Wellness",
+      items: [
+        "Basic pregnancy nutrition guidance",
+        "Healthy daily lifestyle practices",
+        "Physical wellbeing support",
+      ],
+    },
+    {
+      title: "Labour Preparation",
+      items: [
+        "Labour breathing patterns",
+        "Delivery preparation practices",
+        "Relaxation methods for childbirth",
+      ],
+    },
+    {
+      title: "Baby Bonding Activities",
+      items: [
+        "Baby visualization exercises",
+        "Positive womb affirmations",
+        "Garbha Samvad (womb talk)",
+        "Spiritual storytelling",
+      ],
+    },
+    {
+      title: "Baby Development Activities",
+      items: [
+        "Right-brain stimulation activities",
+        "Left-brain stimulation activities",
+        "Sensory engagement exercises",
+      ],
+    },
+    {
+      title: "Holistic Wellness",
+      items: [
+        "Mantra chanting vibrations",
+        "Healing raga music",
+        "Colour therapy concepts",
+        "Mindfulness activities",
+      ],
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-bg-light py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="relative overflow-hidden w-full min-h-screen bg-background py-12 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4 text-primary">
-            <Lock className="w-5 h-5" />
-            <span className="font-semibold uppercase tracking-wider text-sm">Secure Registration</span>
-          </div>
-          <h1 className="text-4xl font-bold text-text-dark font-heading mb-4">Complete Enrollment</h1>
-          <div className="flex justify-center gap-6 text-sm text-text-dark/70">
-            <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-primary"/> SSL Secured</span>
-            <span className="flex items-center gap-1"><ShieldCheck className="w-4 h-4 text-primary"/> Razorpay Verified</span>
-          </div>
+        {/* Onboarding Headers */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <span className="text-xs uppercase font-sans font-semibold tracking-widest text-primary bg-primary/10 px-4 py-1.5 rounded-full inline-block">
+            Enrollment Hub
+          </span>
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-primary-dark">
+            Prenatal Yoga &amp; Garbhasanskar Program Registration
+          </h1>
+          <p className="text-foreground/80 font-sans text-sm md:text-base leading-relaxed">
+            Join our comprehensive program designed to support your physical, emotional, and spiritual wellbeing throughout pregnancy. Guided by <strong>Dr. Madhavi Soriya</strong> (Physiotherapist &amp; Wellness Coach).
+          </p>
         </div>
 
-        {/* Critical Notice */}
-        <div className="bg-white border-l-4 border-warning p-6 mb-8 rounded-r-xl shadow-sm">
-          <h2 className="text-warning font-bold mb-2 flex items-center gap-2">
-            ⚠️ BEFORE YOU PROCEED — PLEASE READ
-          </h2>
-          <ul className="space-y-1 text-text-dark/80 mb-4 list-disc list-inside">
-            <li><strong>Class Time:</strong> 4:00 PM – 5:00 PM IST (Daily)</li>
-            <li><strong>Language:</strong> Hindi</li>
-            <li><strong>Fee:</strong> ₹1499 per month</li>
-            <li><strong className="text-warning">NO REFUND after payment</strong></li>
-            <li>All terms & conditions apply</li>
-          </ul>
-          <div className="flex gap-4 text-sm font-medium">
-            <Link href="/faq" className="text-primary hover:underline">Read FAQ</Link>
-            <Link href="/policies#refund" className="text-primary hover:underline">Read Refund Policy</Link>
-            <Link href="/policies#terms" className="text-primary hover:underline">Read T&C</Link>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
+        {/* Core Layout Split */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
-          {/* Left: Registration Form */}
-          <div className="lg:col-span-2">
-            <form id="registration-form" onSubmit={handlePayment} className="space-y-8">
+          {/* Left Column: Program Details & Sales copy */}
+          <div className="lg:col-span-7 space-y-10">
+            
+            {/* Timings & Timetable */}
+            <div className="bg-white border border-border/40 rounded-3xl p-6 md:p-8 premium-shadow space-y-6">
+              <h3 className="font-serif text-xl md:text-2xl font-bold text-primary-dark border-b border-border/45 pb-3">
+                Class Schedule &amp; Timings
+              </h3>
               
-              {/* Step 0: Program & Plan Selection */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20 space-y-6">
-                <div className="space-y-4">
-                  <label className="block text-sm font-bold text-text-dark/70">Select Program</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setProgram('fertility')}
-                      className={`p-4 rounded-xl border-2 transition-all text-left ${program === 'fertility' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-gray-100'}`}
-                    >
-                      <div className="text-xl mb-1">🌸</div>
-                      <div className={`font-bold ${program === 'fertility' ? 'text-primary' : 'text-text-dark'}`}>Fertility</div>
-                      <div className="text-xs text-text-dark/50">Yoga & Wellness</div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setProgram('prenatal')}
-                      className={`p-4 rounded-xl border-2 transition-all text-left ${program === 'prenatal' ? 'border-primary bg-primary/5 ring-4 ring-primary/10' : 'border-gray-100'}`}
-                    >
-                      <div className="text-xl mb-1">👶</div>
-                      <div className={`font-bold ${program === 'prenatal' ? 'text-primary' : 'text-text-dark'}`}>Prenatal</div>
-                      <div className="text-xs text-text-dark/50">Yoga & Garbhasanskar</div>
-                    </button>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-primary-light/30 border border-primary/20 rounded-2xl space-y-1">
+                  <span className="text-[10px] uppercase font-sans font-semibold tracking-wider text-primary">BATCH A</span>
+                  <h4 className="font-serif font-bold text-primary-dark text-base">Morning Batch</h4>
+                  <p className="font-sans font-bold text-sm text-primary">6:15 AM – 7:15 AM IST</p>
                 </div>
-
-                <div className="space-y-4">
-                  <label className="block text-sm font-bold text-text-dark/70">Select Duration (Same for both programs)</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { id: '1_month', label: '1 Month', price: 1499 },
-                      { id: '3_months', label: '3 Months', price: 3999 },
-                      { id: '6_months', label: '6 Months', price: 7999 },
-                    ].map((p) => (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => setPlan(p.id)}
-                        className={`px-3 py-4 rounded-xl border-2 text-center transition-all ${plan === p.id ? 'border-primary bg-primary/5 text-primary' : 'border-gray-100 text-text-dark/50 hover:border-gray-200'}`}
-                      >
-                        <div className="font-bold text-sm">{p.label}</div>
-                        <div className="text-lg font-black mt-1">₹{p.price}</div>
-                        {p.id === '3_months' && <div className="text-[10px] uppercase font-bold text-primary mt-1">Best Value</div>}
-                      </button>
-                    ))}
-                  </div>
+                <div className="p-4 bg-secondary-light/35 border border-secondary/20 rounded-2xl space-y-1">
+                  <span className="text-[10px] uppercase font-sans font-semibold tracking-wider text-secondary-dark">BATCH B</span>
+                  <h4 className="font-serif font-bold text-primary-dark text-base">Evening Batch</h4>
+                  <p className="font-sans font-bold text-sm text-secondary-dark">5:00 PM – 6:00 PM IST</p>
                 </div>
               </div>
 
-              {/* Step 1 */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20">
-                <h3 className="text-xl font-bold font-heading mb-4 border-b pb-2">Step 1: Personal Details</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Full Name *</label>
-                    <input type="text" required value={name} onChange={e => setName(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Email Address *</label>
-                    <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Phone (WhatsApp) *</label>
-                    <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">City *</label>
-                    <input type="text" required value={city} onChange={e => setCity(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">State *</label>
-                    <input type="text" required value={state} onChange={e => setState(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Country *</label>
-                    <input type="text" required value={country} onChange={e => setCountry(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
+              <p className="text-xs text-foreground/60 font-sans leading-relaxed">
+                * Participants may select their preferred batch during registration and may switch between available batches whenever required.
+              </p>
+
+              {/* Schedule quick specs */}
+              <div className="border-t border-border/40 pt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-sans text-foreground/80">
+                <div>
+                  <p className="text-foreground/50">Weekly Cadence</p>
+                  <p className="font-semibold">5 Classes Per Week</p>
+                </div>
+                <div>
+                  <p className="text-foreground/50">Monthly Volume</p>
+                  <p className="font-semibold">~20 Sessions / Month</p>
+                </div>
+                <div>
+                  <p className="text-foreground/50">Days</p>
+                  <p className="font-semibold">Monday to Friday</p>
+                </div>
+                <div>
+                  <p className="text-foreground/50">Language</p>
+                  <p className="font-semibold">Hindi &amp; Simple English</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Fee Plans */}
+            <div className="bg-white border border-border/40 rounded-3xl p-6 md:p-8 premium-shadow space-y-6">
+              <h3 className="font-serif text-xl md:text-2xl font-bold text-primary-dark border-b border-border/45 pb-3">
+                Program Fees
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-5 border border-border/60 rounded-2xl text-center space-y-2 bg-background">
+                  <h4 className="text-xs font-sans text-foreground/50 uppercase tracking-wider">1 Month Plan</h4>
+                  <p className="font-serif text-2xl font-bold text-primary-dark">₹1,499</p>
+                </div>
+                <div className="p-5 border border-primary/20 rounded-2xl text-center space-y-2 bg-primary-light/10">
+                  <h4 className="text-xs font-sans text-primary uppercase tracking-wider font-semibold">3 Month Plan</h4>
+                  <p className="font-serif text-2xl font-bold text-primary-dark">₹3,999</p>
+                </div>
+                <div className="p-5 border border-secondary/20 rounded-2xl text-center space-y-2 bg-secondary-light/10">
+                  <h4 className="text-xs font-sans text-secondary-dark uppercase tracking-wider font-semibold">6 Month Plan</h4>
+                  <p className="font-serif text-2xl font-bold text-primary-dark">₹7,999</p>
                 </div>
               </div>
 
-              {/* Step 2 */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20">
-                <h3 className="text-xl font-bold font-heading mb-4 border-b pb-2">Step 2: Health Info (Optional)</h3>
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Age</label>
-                    <input type="number" value={age} onChange={e => setAge(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium mb-1">Health Conditions (if any)</label>
-                    <textarea value={healthConditions} onChange={e => setHealthConditions(e.target.value)} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary outline-none" rows={3} />
-                  </div>
-                </div>
+              <div className="p-4 bg-red-50 border border-red-150 rounded-2xl text-xs font-sans text-red-850 flex items-start space-x-2">
+                <AlertCircle className="h-4 w-4 text-red-650 flex-shrink-0 mt-0.5" />
+                <p>
+                  <strong>Important Non-Refundable Notice:</strong> Once payment is completed, fees are non-refundable and non-transferable. No adjustments, carry-forwards, transfers, or shifts to future months are permitted.
+                </p>
               </div>
+            </div>
 
-              {/* Step 3: Terms & Conditions Checkboxes */}
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20">
-                <h3 className="text-xl font-bold font-heading mb-4 border-b pb-2">Step 3: Terms & Conditions</h3>
-                <p className="text-sm text-text-dark/70 mb-4">All checkboxes are mandatory to proceed.</p>
-                <div className="space-y-4">
-                  {[
-                    { id: 'programDetails', label: 'I have read the complete program details' },
-                    { id: 'faqs', label: 'I have read all FAQs' },
-                    { id: 'timing', label: 'I confirm class timing (4-5 PM IST) works for me' },
-                    { id: 'noRefund', label: 'I UNDERSTAND AND ACCEPT THE NO REFUND POLICY', bold: true, alert: true },
-                    { id: 'terms', label: 'I agree to Terms & Conditions' },
-                    { id: 'privacy', label: 'I accept the Privacy Policy' },
-                    { id: 'whatsappOnly', label: 'I understand WhatsApp group is the only communication method (no personal calls)' },
-                    { id: 'accurateInfo', label: 'I confirm all info provided is accurate' },
-                  ].map(({ id, label, bold, alert }) => (
-                    <label key={id} className={`flex items-start gap-3 p-3 rounded-lg border transition-colors cursor-pointer ${checks[id as keyof typeof checks] ? 'border-primary bg-primary/5' : 'border-gray-200 hover:bg-gray-50'}`}>
-                      <div className="mt-0.5 relative flex-shrink-0">
-                        <input
-                          type="checkbox"
-                          checked={checks[id as keyof typeof checks]}
-                          onChange={() => handleCheckboxChange(id as keyof typeof checks)}
-                          className="peer sr-only"
-                        />
-                        <div className={`w-5 h-5 border-2 rounded transition-all flex items-center justify-center ${checks[id as keyof typeof checks] ? 'bg-primary border-primary' : 'border-gray-400 bg-white'}`}>
-                           {checks[id as keyof typeof checks] && <CheckCircle2 className="w-4 h-4 text-white" />}
-                        </div>
-                      </div>
-                      <span className={`text-sm ${bold ? 'font-bold' : 'text-text-dark/80'} ${alert ? 'text-warning' : ''}`}>
-                        {label}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </form>
-          </div>
-
-          {/* Right: Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-secondary/20 sticky top-24">
-              <h3 className="text-xl font-bold font-heading mb-4 border-b pb-2">Order Summary</h3>
-              <div className="mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-2xl">
-                    {program === 'fertility' ? '🌸' : '👶'}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-text-dark leading-tight">
-                      {program === 'fertility' ? 'Fertility Yoga & Wellness' : 'Prenatal Yoga & Garbhasanskar'}
+            {/* Curriculum: What you'll learn */}
+            <div className="bg-white border border-border/40 rounded-3xl p-6 md:p-8 premium-shadow space-y-6">
+              <h3 className="font-serif text-xl md:text-2xl font-bold text-primary-dark border-b border-border/45 pb-3">
+                Curriculum: What You'll Learn
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {learningModules.map((mod, idx) => (
+                  <div key={idx} className="space-y-2">
+                    <h4 className="font-serif text-base font-bold text-primary-dark flex items-center space-x-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
+                      <span>{mod.title}</span>
                     </h4>
-                    <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                      {plan.replace('_', ' ')}
-                    </span>
+                    <ul className="space-y-1 text-xs text-foreground/80 font-sans pl-3 list-none">
+                      {mod.items.map((item, idy) => (
+                        <li key={idy} className="flex items-start space-x-1">
+                          <Check className="h-3 w-3 text-secondary-dark mt-1 mr-1 flex-shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-                
-                <ul className="text-sm text-text-dark/70 space-y-2 mb-6 bg-bg-light/50 p-4 rounded-xl">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary" />
-                    <span>{program === 'fertility' ? '4:00 - 5:00 PM IST' : '6:15 AM or 5:00 PM IST'}</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary" />
-                    <span>Daily Live Online Classes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary" />
-                    <span>Hindi Language</span>
-                  </li>
-                </ul>
+                ))}
+              </div>
+            </div>
 
-                <div className="space-y-2 border-t pt-4">
-                  <div className="flex justify-between text-sm text-text-dark/60">
-                    <span>Program Fee ({plan.replace('_', ' ')}):</span>
-                    <span>₹{currentPrice}</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-xl text-text-dark pt-2 border-t">
-                    <span>Total Amount:</span>
-                    <span className="text-primary">₹{currentPrice}</span>
-                  </div>
-                </div>
-                <p className="text-[10px] text-warning font-bold mt-4 text-center p-2 bg-warning/5 rounded-lg border border-warning/10 uppercase tracking-widest">
-                  ⚠️ No Refund After Payment
+            {/* Eligibility & Disclaimers */}
+            <div className="bg-white border border-border/40 rounded-3xl p-6 md:p-8 premium-shadow space-y-6">
+              <div className="space-y-3">
+                <h3 className="font-serif text-xl font-bold text-primary-dark border-b border-border/40 pb-2">
+                  Eligibility Criteria
+                </h3>
+                <ul className="space-y-1.5 text-xs md:text-sm text-foreground/80 font-sans pl-4 list-disc">
+                  <li>Completion of at least <strong>12 weeks (3 months)</strong> of pregnancy.</li>
+                  <li>Approval from your primary treating gynecologist or healthcare provider.</li>
+                  <li>Absence of medical complications requiring absolute bed rest.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-3 border-t border-border/30 pt-4">
+                <h4 className="font-serif text-base font-bold text-primary-dark">
+                  Medical Disclaimer
+                </h4>
+                <p className="text-xs text-foreground/75 font-sans leading-relaxed">
+                  This program is designed for educational and wellness purposes only and is not intended to diagnose, treat, cure, or prevent any medical condition. Participation should begin only after obtaining approval from your doctor. If you experience discomfort, pain, dizziness, bleeding, contractions, or any unusual symptoms, discontinue practice immediately and consult your doctor.
+                </p>
+              </div>
+            </div>
+
+            {/* Payments Card Details */}
+            <div className="bg-gradient-to-tr from-secondary-light/35 to-primary-light/35 border-2 border-primary/20 rounded-3xl p-6 md:p-8 premium-shadow space-y-6">
+              <div>
+                <h3 className="font-serif text-xl md:text-2xl font-bold text-primary-dark mb-1">
+                  Payment Details
+                </h3>
+                <p className="text-xs text-foreground/70 font-sans">
+                  Complete your payment via UPI or Bank Transfer, copy transaction details, and upload the screenshot.
                 </p>
               </div>
 
-              {!allChecked && (
-                <p className="text-warning text-sm text-center mb-3 font-medium">Please accept all terms to proceed</p>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* UPI Card */}
+                <div className="bg-white p-5 rounded-2xl border border-border/60 space-y-3 relative">
+                  <span className="text-[10px] uppercase font-sans font-semibold tracking-wider text-primary bg-primary-light px-2.5 py-0.5 rounded-full inline-block">
+                    UPI Payment
+                  </span>
+                  <div className="font-sans text-xs space-y-1 pt-1">
+                    <p className="text-foreground/50">UPI ID:</p>
+                    <p className="font-bold text-sm text-primary-dark select-all">yogadelight30@okaxis</p>
+                    <p className="text-foreground/50 pt-1">Payee Name:</p>
+                    <p className="font-medium text-foreground/80">Soriya Madhavi Jayeshbhai</p>
+                  </div>
+                </div>
 
-              <button
-                form="registration-form"
-                type="submit"
-                disabled={!allChecked || isProcessing}
-                className={`w-full py-4 rounded-xl font-bold text-white transition-all shadow-md ${
-                  allChecked 
-                    ? 'bg-primary hover:bg-primary-dark hover:shadow-lg transform hover:-translate-y-0.5' 
-                    : 'bg-gray-300 cursor-not-allowed text-gray-500 shadow-none'
-                }`}
-              >
-                {isProcessing ? 'Processing...' : `PROCEED TO PAYMENT — ₹${currentPrice}`}
-              </button>
-              
-              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-text-dark/60">
-                <Lock className="w-3 h-3" /> Secure Payment via Razorpay
+                {/* Bank Transfer Card */}
+                <div className="bg-white p-5 rounded-2xl border border-border/60 space-y-3">
+                  <span className="text-[10px] uppercase font-sans font-semibold tracking-wider text-secondary-dark bg-secondary-light px-2.5 py-0.5 rounded-full inline-block">
+                    Bank Transfer
+                  </span>
+                  <div className="font-sans text-xs space-y-1 pt-1">
+                    <p className="text-foreground/80"><strong className="text-foreground/50 font-normal">Name:</strong> Soriya Madhavi Jayeshbhai</p>
+                    <p className="text-foreground/80"><strong className="text-foreground/50 font-normal">Bank:</strong> Axis Bank</p>
+                    <p className="text-foreground/80"><strong className="text-foreground/50 font-normal">A/C Number:</strong> 922010017253617</p>
+                    <p className="text-foreground/80"><strong className="text-foreground/50 font-normal">IFSC Code:</strong> UTIB0000662</p>
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Terms and Policies */}
+            <div className="bg-white border border-border/40 rounded-3xl p-6 md:p-8 premium-shadow space-y-4">
+              <h3 className="font-serif text-lg font-bold text-primary-dark border-b border-border/40 pb-2">
+                Terms &amp; Policies
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans text-foreground/85 leading-relaxed">
+                <div>
+                  <p className="font-bold text-primary-dark">Non-Refundable Policy</p>
+                  <p className="text-foreground/70 mt-0.5">All fees paid towards the program are strictly non-refundable.</p>
+                </div>
+                <div>
+                  <p className="font-bold text-primary-dark">Non-Transferable Policy</p>
+                  <p className="text-foreground/70 mt-0.5">Registrations and fees cannot be transferred to another participant, batch, or future month.</p>
+                </div>
+                <div>
+                  <p className="font-bold text-primary-dark">Class Rescheduling</p>
+                  <p className="text-foreground/70 mt-0.5">Sessions may be rescheduled for festivals or emergencies. Updates are shared via WhatsApp.</p>
+                </div>
+                <div>
+                  <p className="font-bold text-primary-dark">Attendance Terms</p>
+                  <p className="text-foreground/70 mt-0.5">Missed classes are not eligible for adjustments, catchups, or carry-forward credits.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Confirmation details */}
+            <div className="bg-white border border-border/40 rounded-3xl p-6 md:p-8 premium-shadow space-y-4">
+              <h3 className="font-serif text-lg font-semibold text-primary-dark">
+                Registration Review &amp; Confirmation Process
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center font-sans text-xs">
+                <div className="space-y-1">
+                  <div className="h-8 w-8 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center font-bold">1</div>
+                  <p className="font-semibold text-primary-dark">Submit Details</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="h-8 w-8 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center font-bold">2</div>
+                  <p className="font-semibold text-primary-dark">Verify Payment</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="h-8 w-8 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center font-bold">3</div>
+                  <p className="font-semibold text-primary-dark">WhatsApp Add</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="h-8 w-8 rounded-full bg-primary-light text-primary mx-auto flex items-center justify-center font-bold">4</div>
+                  <p className="font-semibold text-primary-dark">Join Sessions</p>
+                </div>
+              </div>
+              <p className="text-xs text-center text-foreground/60 pt-2 font-sans">
+                Confirmation details are processed and sent to your email/phone within <strong>24 hours</strong>.
+              </p>
+            </div>
+
+            {/* Need Help Support Contact */}
+            <div className="bg-primary-light/20 border border-primary/10 rounded-2xl p-6 text-center space-y-3">
+              <h4 className="font-serif text-base font-bold text-primary-dark">Need Registration Help?</h4>
+              <p className="text-xs text-foreground/75 font-sans">
+                If you do not receive a registration confirmation or have bank query issues, contact our support team:
+              </p>
+              <div className="flex items-center justify-center space-x-2 text-primary font-sans text-sm font-semibold">
+                <Mail className="h-4 w-4" />
+                <a href="mailto:yogadelight30@gmail.com" className="underline">yogadelight30@gmail.com</a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right Column: Registration Form Container */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24">
+            <RegistrationForm />
           </div>
 
         </div>
+
       </div>
     </div>
   );

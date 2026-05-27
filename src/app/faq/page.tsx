@@ -1,132 +1,163 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-import Link from 'next/link';
-
-const faqs = [
-  {
-    category: "General",
-    questions: [
-      { q: "Who is this program for?", a: "We have two specialized programs: 1) Fertility Yoga for women planning for pregnancy or managing PCOS/hormonal imbalances. 2) Prenatal Yoga & Garbhasanskar for expecting mothers seeking a healthy pregnancy and labor preparation." },
-      { q: "What language are classes in?", a: "All live classes for both programs are conducted in Hindi." },
-      { q: "Do I need prior yoga experience?", a: "No prior experience is necessary. Dr. Madhavi guides you through safe, gentle, and effective practices tailored to your stage." }
-    ]
-  },
-  {
-    category: "Program Details",
-    questions: [
-      { q: "What is included in Fertility Yoga?", a: "Daily live classes (4-5 PM), Fertility Yoga, Pranayam, Meditation, Stress Management, and a Diet Guidance Welcome Kit." },
-      { q: "What is included in Prenatal Yoga?", a: "Prenatal Yoga, Garbhasanskar, Mantra Chanting, Baby's Brain Development Activities, and Labour Preparation (specifically in the 9th month)." },
-      { q: "Do I get personal attention?", a: "Yes. We keep batch sizes small to ensure Dr. Madhavi can provide personalized modifications for everyone." }
-    ]
-  },
-  {
-    category: "Schedule & Access",
-    questions: [
-      { q: "What are the class timings?", a: "Fertility Batch: 4:00 PM – 5:00 PM IST. Prenatal Batch: Morning (6:15 AM – 7:15 AM) or Evening (5:00 PM – 6:00 PM)." },
-      { q: "How do I join the class?", a: "After successful payment, you'll be redirected to a 'Thank You' page with your Zoom link. You'll also receive an immediate email with all access details." },
-      { q: "Is the WhatsApp group mandatory?", a: "Yes. It is our ONLY official communication channel for class links and daily updates." }
-    ]
-  },
-  {
-    category: "Refunds & Terms",
-    questions: [
-      { q: "What is the refund policy?", a: "We have a strict NO REFUND policy for both programs. Once payment is confirmed, no refunds or transfers will be issued. Please verify the batch timings work for you before enrolling." },
-      { q: "Can I transfer my membership?", a: "No, memberships are non-transferable and strictly for the registered individual." },
-      { q: "How do I contact Dr. Madhavi?", a: "To maintain professional boundaries, all communication is handled via the official WhatsApp group. Dr. Madhavi responds to queries daily at 6 PM IST." }
-    ]
-  }
-];
+import React, { useState, useMemo } from "react";
+import { faqs } from "@/data/faqs";
+import { AccordionItem } from "@/components/ui/Accordion";
+import { HelpCircle, Search, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export default function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState("General");
-  const [openQ, setOpenQ] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<"all" | "safety" | "general" | "classes" | "payment">("all");
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const currentQuestions = faqs.find(f => f.category === activeCategory)?.questions || [];
+  const categories = [
+    { id: "all" as const, label: "All Questions" },
+    { id: "safety" as const, label: "Safety & Medical" },
+    { id: "general" as const, label: "General Information" },
+    { id: "classes" as const, label: "Classes & Access" },
+    { id: "payment" as const, label: "Payments & Refunds" },
+  ];
+
+  // Dynamic filter
+  const filteredFAQs = useMemo(() => {
+    return faqs.filter((faq) => {
+      const matchesCategory = activeCategory === "all" || faq.category === activeCategory;
+      const matchesSearch =
+        faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [searchQuery, activeCategory]);
+
+  const handleToggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  // Dynamic FAQ Page Schema Markup
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
+  };
 
   return (
-    <div className="min-h-screen bg-bg-light py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        
-        <div className="text-center space-y-6 mb-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-text-dark tracking-tight">
-            All Your Questions — Answered
+    <div className="relative overflow-hidden w-full min-h-screen">
+      {/* Schema Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
+      {/* Header */}
+      <section className="pt-12 pb-16 md:pt-20 md:pb-24 bg-primary-light/40 text-center relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <span className="text-xs uppercase font-sans font-semibold tracking-widest text-primary bg-primary/10 px-4 py-1.5 rounded-full inline-block">
+            Resources
+          </span>
+          <h1 className="font-serif text-4xl sm:text-5xl font-bold text-primary-dark">
+            Frequently Asked Questions
           </h1>
-          <p className="text-xl text-text-dark/70">
-            Please read through these details carefully before registering.
+          <p className="text-foreground/80 font-sans text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+            Find answers to questions about prenatal safety, online video setup, payment schemes, and doctor guidelines.
           </p>
         </div>
+      </section>
 
-        {/* Category Tabs */}
-        <div className="flex flex-wrap justify-center gap-3 mb-10">
-          {faqs.map((faq) => (
-            <button
-              key={faq.category}
-              onClick={() => {
-                setActiveCategory(faq.category);
-                setOpenQ(null);
-              }}
-              className={`px-6 py-2.5 rounded-full font-bold transition-all text-sm ${
-                activeCategory === faq.category 
-                  ? 'bg-primary text-white shadow-md' 
-                  : 'bg-white text-text-dark/70 hover:bg-pastel-blue border border-gray-200'
-              }`}
-            >
-              {faq.category}
-            </button>
-          ))}
-        </div>
+      {/* Search & Accordion Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          {/* Search bar */}
+          <div className="relative rounded-2xl bg-background border border-border/80 flex items-center px-4 py-3 premium-shadow">
+            <Search className="h-5 w-5 text-foreground/40 mr-3 flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Search for questions (e.g., 'safety', 'IVF', 'fee')..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-transparent text-sm md:text-base text-foreground font-sans focus:outline-none placeholder-foreground/40"
+            />
+          </div>
 
-        {/* FAQ Accordion Bento Box */}
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 min-h-[400px]">
-          <h2 className="text-2xl font-bold mb-6 border-b pb-4 text-primary-dark">{activeCategory} Questions</h2>
-          <div className="space-y-4">
-            {currentQuestions.map((item, i) => (
-              <div 
-                key={i} 
-                className={`border rounded-2xl overflow-hidden transition-colors ${openQ === item.q ? 'border-primary/50 bg-primary/5' : 'border-gray-200 hover:border-primary/30'}`}
+          {/* Category Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-2 border-b border-border/30 pb-4">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setOpenIndex(null);
+                }}
+                className={`px-4 py-2 rounded-full font-sans text-xs md:text-sm font-semibold transition-all cursor-pointer ${
+                  activeCategory === cat.id
+                    ? "bg-primary text-white premium-shadow"
+                    : "text-foreground/75 hover:bg-primary-light/45 hover:text-primary"
+                }`}
               >
-                <button 
-                  onClick={() => setOpenQ(openQ === item.q ? null : item.q)}
-                  className="w-full text-left p-5 flex justify-between items-center font-bold text-text-dark"
-                >
-                  <span className="pr-4">{item.q}</span>
-                  {openQ === item.q ? <ChevronUp className="w-5 h-5 text-primary flex-shrink-0" /> : <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />}
-                </button>
-                {openQ === item.q && (
-                  <div className="p-5 pt-0 text-text-dark/70 leading-relaxed font-medium border-t border-primary/10 mt-2">
-                    {item.a}
-                  </div>
-                )}
-              </div>
+                {cat.label}
+              </button>
             ))}
           </div>
-        </div>
 
-        {/* CTA */}
-        <div className="mt-16 text-center bg-pastel-blue p-10 rounded-3xl border border-blue-100">
-          <h2 className="text-2xl font-bold mb-4">Satisfied with the answers?</h2>
-          <p className="text-text-dark/70 mb-8 max-w-lg mx-auto">
-            If you're ready to commit to your wellness journey and the class timing works for you, secure your spot today.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link 
-              href="/register?program=fertility" 
-              className="px-8 py-4 bg-primary text-white rounded-full font-bold shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-1 transition-all inline-block"
-            >
-              Register for Fertility →
-            </Link>
-            <Link 
-              href="/register?program=prenatal" 
-              className="px-8 py-4 bg-white text-primary border-2 border-primary rounded-full font-bold shadow-lg hover:-translate-y-1 transition-all inline-block"
-            >
-              Register for Prenatal →
-            </Link>
+          {/* Accordion list */}
+          <div className="bg-background border border-border/50 rounded-3xl p-6 md:p-10 premium-shadow">
+            {filteredFAQs.length === 0 ? (
+              <div className="text-center py-12 font-sans text-foreground/50 flex flex-col items-center">
+                <HelpCircle className="h-10 w-10 mb-2 text-foreground/30" />
+                <p>No questions matched your search query.</p>
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    setActiveCategory("all");
+                  }}
+                  className="text-primary hover:underline text-xs mt-2 font-sans font-semibold cursor-pointer"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {filteredFAQs.map((faq, index) => (
+                  <AccordionItem
+                    key={index}
+                    question={faq.question}
+                    answer={faq.answer}
+                    isOpen={openIndex === index}
+                    onToggle={() => handleToggle(index)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
+      </section>
 
-      </div>
+      {/* Support trigger block */}
+      <section className="py-16 bg-primary-light/30 border-t border-border/20 text-center">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <h3 className="font-serif text-2xl font-semibold text-primary-dark">
+            Still Have Queries?
+          </h3>
+          <p className="text-foreground/75 font-sans text-sm md:text-base leading-relaxed">
+            If your clinical condition is unique or not listed, you can write directly to Dr. Madhavi Soriya via the contact form or send an email.
+          </p>
+          <div className="pt-2 flex justify-center space-x-4">
+            <Button href="/contact" variant="primary">
+              Contact Form
+            </Button>
+            <Button href="mailto:yogadelight30@gmail.com" variant="outline">
+              Email Dr. Madhavi
+            </Button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

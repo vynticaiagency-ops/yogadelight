@@ -1,58 +1,79 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-sans: var(--font-plus-jakarta);
-  --font-heading: var(--font-plus-jakarta);
+:root {
+  --background: #F8F9FC; /* Crisp off-white/gray-blue background */
+  --foreground: #111827; /* Dark slate text */
   
-  /* SaaS Bento Box Theme Colors */
-  --color-primary: #6366F1;       /* Indigo 500 */
-  --color-primary-dark: #4F46E5;  /* Indigo 600 */
-  --color-secondary: #818CF8;     /* Indigo 400 */
-  --color-bg-light: #FAFAFA;      /* Very light gray/white */
-  --color-text-dark: #1E293B;     /* Slate 800 */
+  --primary: #4F46E5; /* Vibrant indigo */
+  --primary-dark: #3730A3;
+  --primary-light: #EEF2FF;
   
-  /* Utility Colors */
-  --color-success: #10B981;       /* Emerald 500 */
-  --color-warning: #F59E0B;       /* Amber 500 */
+  --secondary: #FFF0E4; /* Soft warm orange/peach card bg */
+  --secondary-dark: #EA580C; /* Warm orange text */
+  --secondary-light: #FFFAF6;
   
-  /* Pastel Card Colors */
-  --color-pastel-orange: #FFEDD5; /* Orange 100 */
-  --color-pastel-blue: #E0F2FE;   /* Sky 100 */
-  --color-pastel-purple: #F3E8FF; /* Purple 100 */
-  --color-pastel-green: #D1FAE5;  /* Emerald 100 */
+  --accent: #E0F2FE; /* Pastel blue accent bg */
+  --accent-dark: #0369A1; /* Muted blue text */
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  
+  --border: #E5E7EB;
+  --ring: #4F46E5;
 }
 
-:root {
-  --background: var(--color-bg-light);
-  --foreground: var(--color-text-dark);
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-light: var(--secondary-light);
+  
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-card: var(--card);
+  --color-card-foreground: var(--color-card-foreground);
+  
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+
+  /* Use Jakarta Sans for both serif and sans definitions to match the modern geometric layout of the mockup */
+  --font-serif: var(--font-jakarta);
+  --font-sans: var(--font-jakarta);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
-/* Performance: Optimize sections for scrolling */
-section {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
+/* Custom premium design tokens matching the mockup */
+.gradient-bg {
+  background: #F8F9FC;
 }
 
-/* Hero section should always be visible immediately */
-section:first-of-type {
-  content-visibility: visible;
+.gradient-card {
+  background: #FFFFFF;
 }
 
-/* Smooth transitions for all interactive elements */
-* {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+.gradient-primary {
+  background: #4F46E5;
 }
 
-/* Image optimization fallback */
-img {
-  content-visibility: auto;
+.gradient-peach {
+  background: #FFF0E4;
 }
 
+.premium-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05), 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.premium-shadow-hover:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
+}
